@@ -6,18 +6,18 @@ import dj_database_url
 # Load environment variables from .env file
 load_dotenv()
 
-# Build paths
+# Paths
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Security key
+# Secret key
 SECRET_KEY = os.environ.get('SECRET_KEY', os.getenv('DJANGO_SECRET_KEY', 'django-insecure-your-fallback-secret-key'))
 
-# Debug mode (False in production)
+# Debug mode
 DEBUG = 'RENDER' not in os.environ
 
 # Allowed hosts
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.onrender.com']
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'helper.apps.HelperConfig',  # Make sure 'helper' app is correctly referenced
+    'helper.apps.HelperConfig',
 ]
 
 # Middleware
@@ -52,7 +52,7 @@ WSGI_APPLICATION = 'varsity_plug.wsgi.application'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Add this path for templates
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -109,10 +109,10 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Default primary key field type
+# Default auto field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Authentication redirects
+# Auth redirect URLs
 LOGIN_REDIRECT_URL = 'redirect_after_login'
 LOGOUT_REDIRECT_URL = '/'
 
@@ -129,7 +129,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
+SESSION_COOKIE_AGE = 1209600  # 2 weeks
 
-# OpenAI API Key
+# OpenAI API
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
