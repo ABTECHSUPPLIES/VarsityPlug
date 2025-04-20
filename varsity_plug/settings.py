@@ -6,13 +6,13 @@ import dj_database_url
 # Load environment variables from .env file
 load_dotenv()
 
-# Paths
+# Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Secret key
 SECRET_KEY = os.environ.get('SECRET_KEY', os.getenv('DJANGO_SECRET_KEY', 'django-insecure-your-fallback-secret-key'))
 
-# Debug mode
+# Debug mode: False on Render
 DEBUG = 'RENDER' not in os.environ
 
 # Allowed hosts
@@ -21,7 +21,7 @@ RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
-# Installed apps
+# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -32,10 +32,9 @@ INSTALLED_APPS = [
     'helper.apps.HelperConfig',
 ]
 
-# Middleware
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Enable static file serving
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -44,11 +43,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# URLs and WSGI
 ROOT_URLCONF = 'varsity_plug.urls'
-WSGI_APPLICATION = 'varsity_plug.wsgi.application'
 
-# Templates
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -69,7 +65,9 @@ TEMPLATES = [
     },
 ]
 
-# Database
+WSGI_APPLICATION = 'varsity_plug.wsgi.application'
+
+# Database configuration
 if 'RENDER' in os.environ:
     DATABASES = {
         'default': dj_database_url.config(
@@ -99,7 +97,7 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files
+# Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -109,7 +107,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Default auto field
+# Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Auth redirect URLs
@@ -131,5 +129,5 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 
-# OpenAI API
+# OpenAI API Key (used in AI features)
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
