@@ -7,23 +7,23 @@ certifi==2025.1.31
 charset-normalizer==3.4.1
 colorama==0.4.6
 dj-database-url==2.3.0
-Django==5.1.6
+Django==5.1.6  # Ensure this matches your project Django version
 django-crispy-forms==2.3
 django-ratelimit==4.1.0
 frozenlist==1.6.0
-gunicorn==23.0.0
+gunicorn==23.0.0  # For production server on Render
 idna==3.10
 multidict==6.4.3
-numpy==1.24.2  # Ensure compatibility with other dependencies
+numpy==1.24.2  # Ensure compatibility with OpenCV and Tesseract
 openai==0.28.0
 opencv-python==4.11.0.86
 packaging==24.2
 pillow==11.1.0
 propcache==0.3.1
-psycopg2-binary==2.9.10
+psycopg2-binary==2.9.10  # PostgreSQL support on Render
 PyPDF2==3.0.1
-pytesseract==0.3.13
-python-dotenv==1.0.1
+pytesseract==0.3.13  # OCR for Matric certificates, IDs, etc.
+python-dotenv==1.0.1  # Load .env variables locally
 requests==2.32.3
 sqlparse==0.5.3
 tqdm==4.67.1
@@ -31,5 +31,5 @@ typing_extensions==4.13.2
 tzdata==2025.2
 urllib3==2.4.0
 waitress==3.0.2
-whitenoise==6.9.0
+whitenoise==6.9.0  # Serve static files on production
 yarl==1.20.0
