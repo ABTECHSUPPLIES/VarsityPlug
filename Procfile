@@ -1,1 +1,1 @@
-web: gunicorn varsity_plug.wsgi:application
+gunicorn varsity_plug.wsgi:application --bind 0.0.0.0:$PORT
