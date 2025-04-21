@@ -3,24 +3,23 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 
-# Load environment variables from .env file
+# Load environment variables from .env (locally) or from Render
 load_dotenv()
 
-# Base directory
+# Base directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Secret key
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-your-fallback-secret-key')
+# Security key – in Render set SECRET_KEY, locally falls back to .env or a dummy
+SECRET_KEY = os.getenv('SECRET_KEY', os.getenv('DJANGO_SECRET_KEY', 'django-insecure-fallback-key'))
 
-# Debug mode
-DEBUG = not os.getenv('RENDER')
+# Turn debug off on Render, on locally when DEBUG=True in .env
+DEBUG = os.getenv('DEBUG', 'True') == 'True' and 'RENDER' not in os.environ
 
-# Allowed hosts
+# Hosts allowed to serve the project
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.onrender.com']
 RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME')
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
-    ALLOWED_HOSTS.append('.onrender.com')
 
 # Application definition
 INSTALLED_APPS = [
@@ -68,12 +67,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'varsity_plug.wsgi.application'
 
-# Database
+# Database: use DATABASE_URL on Render, sqlite locally
 if os.getenv('RENDER'):
     DATABASES = {
         'default': dj_database_url.config(
             default=os.getenv('DATABASE_URL'),
-            conn_max_age=600
+            conn_max_age=600,
+            ssl_require=True
         )
     }
 else:
@@ -111,11 +111,11 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Default auto field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Auth redirect URLs
+# Redirects
 LOGIN_REDIRECT_URL = 'redirect_after_login'
 LOGOUT_REDIRECT_URL = '/'
 
-# Production security
+# Security settings for production
 SECURE_SSL_REDIRECT = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
@@ -128,7 +128,7 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
-SESSION_COOKIE_AGE = 1209600  # 2 weeks
+SESSION_COOKIE_AGE = 1209600  # two weeks
 
-# OpenAI
+# OpenAI API Key
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
