@@ -10,16 +10,17 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Secret key
-SECRET_KEY = os.environ.get('SECRET_KEY', os.getenv('DJANGO_SECRET_KEY', 'django-insecure-your-fallback-secret-key'))
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-your-fallback-secret-key')
 
-# Debug mode: False on Render
-DEBUG = 'RENDER' not in os.environ
+# Debug mode
+DEBUG = not os.getenv('RENDER')
 
 # Allowed hosts
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '.onrender.com']
 RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    ALLOWED_HOSTS.append('.onrender.com')
 
 # Application definition
 INSTALLED_APPS = [
@@ -34,7 +35,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Enable static file serving
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -54,8 +55,8 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
-                'django.template.context_processors.media',
                 'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.media',
                 'django.contrib.messages.context_processors.messages',
             ],
             'libraries': {
@@ -67,12 +68,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'varsity_plug.wsgi.application'
 
-# Database configuration
-if 'RENDER' in os.environ:
+# Database
+if os.getenv('RENDER'):
     DATABASES = {
         'default': dj_database_url.config(
-            conn_max_age=600,
-            default=os.getenv('DATABASE_URL')
+            default=os.getenv('DATABASE_URL'),
+            conn_max_age=600
         )
     }
 else:
@@ -97,7 +98,7 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# Static files
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -107,14 +108,14 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-# Default primary key field type
+# Default auto field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Auth redirect URLs
 LOGIN_REDIRECT_URL = 'redirect_after_login'
 LOGOUT_REDIRECT_URL = '/'
 
-# Production security settings
+# Production security
 SECURE_SSL_REDIRECT = not DEBUG
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG
@@ -129,5 +130,5 @@ SESSION_COOKIE_SAMESITE = 'Lax'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
 
-# OpenAI API Key (used in AI features)
+# OpenAI
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
